@@ -47,6 +47,11 @@ public class LibrarianTradeFinder implements ClientModInitializer {
 				"key.categories.librarian-trade-finder"
 		));
 
+        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
+            getConfig().load();
+            TradeFinder.searchList(); // refresh the list on world/server join
+        });
+
 		toggleKeyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
 				"key.librarian-trade-finder.toggle",
 				GLFW.GLFW_KEY_O,
@@ -143,11 +148,5 @@ public class LibrarianTradeFinder implements ClientModInitializer {
 	public static TradeFinderConfig getConfig() {
 		return TradeFinderConfig.INSTANCE;
 	}
-
-	// Listen for client world load to refresh enchantment list
-	ClientWorldEvents.LOAD.register((client, world) -> {
-		LOGGER.info("World loaded, refreshing enchantment list.");
-		TradeFinderConfig.INSTANCE.load();
-	});
 
 }
