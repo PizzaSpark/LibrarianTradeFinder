@@ -144,4 +144,10 @@ public class LibrarianTradeFinder implements ClientModInitializer {
 		return TradeFinderConfig.INSTANCE;
 	}
 
+	// Listen for client world load to refresh enchantment list
+	ClientWorldEvents.LOAD.register((client, world) -> {
+		LOGGER.info("World loaded, refreshing enchantment list.");
+		TradeFinderConfig.INSTANCE.load();
+	});
+
 }
