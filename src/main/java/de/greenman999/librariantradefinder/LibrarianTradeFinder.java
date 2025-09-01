@@ -47,11 +47,6 @@ public class LibrarianTradeFinder implements ClientModInitializer {
 				"key.categories.librarian-trade-finder"
 		));
 
-        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
-            getConfig().load();
-            TradeFinder.searchList(); // refresh the list on world/server join
-        });
-
 		toggleKeyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
 				"key.librarian-trade-finder.toggle",
 				GLFW.GLFW_KEY_O,
@@ -133,8 +128,18 @@ public class LibrarianTradeFinder implements ClientModInitializer {
 
 		WorldRenderEvents.END.register(context -> RotationTools.render());
 
-		ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> getConfig().load());
-		ServerLifecycleEvents.END_DATA_PACK_RELOAD.register((server, manager, success) -> {
+        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
+            getConfig().load();
+            TradeFinder.searchList(); // refresh the list on world/server join
+            if (client.player != null) {
+                client.player.sendMessage(
+                        Text.literal("TradeFinder list refreshed on join").formatted(Formatting.GREEN),
+                        false
+                );
+            }
+        });
+
+        ServerLifecycleEvents.END_DATA_PACK_RELOAD.register((server, manager, success) -> {
 			if (MinecraftClient.getInstance().world != null) {
 				getConfig().load();
 			} else {
